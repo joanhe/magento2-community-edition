@@ -36,10 +36,10 @@ use Magento\Catalog\Test\Page\Product\CatalogProductView;
 use Magento\CheckoutAgreements\Test\Fixture\CheckoutAgreement;
 
 /**
- * Class AssertTermsAbsentOnCheckout
- * Check that Checkout Agreement is absent in the Place order tab
+ * Class AssertTermAbsentOnCheckout
+ * Check that Checkout Agreement is absent in the Place order tab.
  */
-class AssertTermsAbsentOnCheckout extends AbstractConstraint
+class AssertTermAbsentOnCheckout extends AbstractConstraint
 {
     /**
      * Constraint severeness
@@ -49,7 +49,7 @@ class AssertTermsAbsentOnCheckout extends AbstractConstraint
     protected $severeness = 'low';
 
     /**
-     * Place order and verify there is no checkbox Terms and Conditions
+     * Place order and verify there is no checkbox Terms and Conditions.
      *
      * @param FixtureFactory $fixtureFactory
      * @param ObjectManager $objectManager

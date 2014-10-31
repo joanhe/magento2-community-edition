@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <!--
 /**
  * Magento
@@ -23,11 +23,17 @@
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 -->
-<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_layout.xsd">
-    <block name="block1" class="Magento\Framework\View\Element\Text">
-        <container name="container" label="Container"/>
-        <action method="getChildBlock">
-            <argument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="value" xsi:type="string">container</argument>
-        </action>
-    </block>
-</layout>
+<page mca="sales/order_create/index">
+    <blocks>
+        <giftMessageForOrderBlock>
+            <class>Magento\GiftMessage\Test\Block\Adminhtml\Order\Create\GiftOptions</class>
+            <locator>#order-giftmessage</locator>
+            <strategy>css selector</strategy>
+        </giftMessageForOrderBlock>
+        <createGiftMessageBlock>
+            <class>Magento\GiftMessage\Test\Block\Adminhtml\Order\Create</class>
+            <locator>#order-items</locator>
+            <strategy>css selector</strategy>
+        </createGiftMessageBlock>
+    </blocks>
+</page>

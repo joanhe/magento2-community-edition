@@ -24,36 +24,39 @@
 
 namespace Magento\CheckoutAgreements\Test\Constraint;
 
-use Magento\CheckoutAgreements\Test\Fixture\CheckoutAgreement;
-use Magento\CheckoutAgreements\Test\Page\Adminhtml\CheckoutAgreementIndex;
 use Mtf\Constraint\AbstractConstraint;
+use Magento\CheckoutAgreements\Test\Page\Adminhtml\CheckoutAgreementIndex;
 
 /**
- * Class AssertTermsInGrid
- * Check that checkout agreement is present in agreement grid
+ * Class AssertTermSuccessDeleteMessage
+ * Check that after deleting Term successful delete message appears.
  */
-class AssertTermsInGrid extends AbstractConstraint
+class AssertTermSuccessDeleteMessage extends AbstractConstraint
 {
+    /**
+     * Success terms and conditions delete message
+     */
+    const SUCCESS_DELETE_MESSAGE = 'The condition has been deleted.';
+
     /**
      * Constraint severeness
      *
      * @var string
      */
-    protected $severeness = 'low';
+    protected $severeness = 'high';
 
     /**
-     * Assert that checkout agreement is present in agreement grid
+     * Assert that after deleting Term successful delete message appears.
      *
      * @param CheckoutAgreementIndex $agreementIndex
-     * @param CheckoutAgreement $agreement
      * @return void
      */
-    public function processAssert(CheckoutAgreementIndex $agreementIndex, CheckoutAgreement $agreement)
+    public function processAssert(CheckoutAgreementIndex $agreementIndex)
     {
-        $agreementIndex->open();
-        \PHPUnit_Framework_Assert::assertTrue(
-            $agreementIndex->getAgreementGridBlock()->isRowVisible(['name' => $agreement->getName()]),
-            'Checkout Agreement \'' . $agreement->getName() . '\' is absent in agreement grid.'
+        \PHPUnit_Framework_Assert::assertEquals(
+            self::SUCCESS_DELETE_MESSAGE,
+            $agreementIndex->getMessagesBlock()->getSuccessMessages(),
+            'Wrong success delete message is displayed.'
         );
     }
 
@@ -64,6 +67,6 @@ class AssertTermsInGrid extends AbstractConstraint
      */
     public function toString()
     {
-        return 'Checkout Agreement is present in agreement grid.';
+        return 'Terms and Conditions success delete message is present.';
     }
 }

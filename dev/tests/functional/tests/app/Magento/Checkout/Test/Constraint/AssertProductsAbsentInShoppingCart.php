@@ -22,51 +22,48 @@
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Magento\CheckoutAgreements\Test\Constraint;
+namespace Magento\Checkout\Test\Constraint;
 
 use Mtf\Constraint\AbstractConstraint;
-use Magento\CheckoutAgreements\Test\Page\Adminhtml\CheckoutAgreementIndex;
+use Magento\Checkout\Test\Page\CheckoutCart;
 
 /**
- * Class AssertTermsSuccessSaveMessage
- * Check that after save block successful message appears
+ * Assert that products are absent in shopping cart.
  */
-class AssertTermsSuccessSaveMessage extends AbstractConstraint
+class AssertProductsAbsentInShoppingCart extends AbstractConstraint
 {
     /**
-     * Success terms and conditions save message
-     */
-    const SUCCESS_SAVE_MESSAGE = 'The condition has been saved.';
-
-    /**
-     * Constraint severeness
+     * Constraint severeness.
      *
      * @var string
      */
-    protected $severeness = 'high';
+    protected $severeness = 'low';
 
     /**
-     * Assert that after save block successful message appears
+     * Assert that products are absent in shopping cart.
      *
-     * @param CheckoutAgreementIndex $agreementIndex
+     * @param CheckoutCart $checkoutCart
+     * @param array $products
      * @return void
      */
-    public function processAssert(CheckoutAgreementIndex $agreementIndex)
+    public function processAssert(CheckoutCart $checkoutCart, array $products)
     {
-        \PHPUnit_Framework_Assert::assertEquals(
-            self::SUCCESS_SAVE_MESSAGE,
-            $agreementIndex->getMessagesBlock()->getSuccessMessages(),
-            'Wrong success message is displayed.'
-        );
+        $checkoutCart->open();
+        foreach ($products as $product) {
+            \PHPUnit_Framework_Assert::assertFalse(
+                $checkoutCart->getCartBlock()->getCartItem($product)->isVisible(),
+                'Product ' . $product->getName() . ' is present in shopping cart.'
+            );
+        }
     }
 
     /**
-     * Returns a string representation of the object
+     * Returns a string representation of the object.
      *
      * @return string
      */
     public function toString()
     {
-        return 'Terms and Conditions success create message is present.';
+        return 'All expected products are absent in shopping cart.';
     }
 }

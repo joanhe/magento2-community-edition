@@ -22,7 +22,7 @@
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Magento\Framework\View\Page\Config;
+namespace Magento\Framework\View\Page\Config\Generator;
 
 use Magento\TestFramework\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Page\Config as PageConfig;
@@ -30,17 +30,12 @@ use Magento\Framework\View\Page\Config as PageConfig;
 /**
  * Test for page config generator model
  */
-class GeneratorTest extends \PHPUnit_Framework_TestCase
+class HeadTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Generator
+     * @var Head
      */
-    protected $generator;
-
-    /**
-     * @var \Magento\Framework\View\Page\Config\Structure|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $structureMock;
+    protected $headGenerator;
 
     /**
      * @var \Magento\Framework\View\Page\Config|\PHPUnit_Framework_MockObject_MockObject
@@ -49,18 +44,14 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->structureMock = $this->getMockBuilder('Magento\Framework\View\Page\Config\Structure')
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->pageConfigMock = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManagerHelper = new ObjectManagerHelper($this);
-        $this->generator = $objectManagerHelper->getObject(
-            'Magento\Framework\View\Page\Config\Generator',
+        $this->headGenerator = $objectManagerHelper->getObject(
+            'Magento\Framework\View\Page\Config\Generator\Head',
             [
-                'structure' => $this->structureMock,
                 'pageConfig' => $this->pageConfigMock,
             ]
         );
@@ -68,8 +59,23 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        $this->structureMock->expects($this->once())->method('processRemoveAssets');
-        $this->structureMock->expects($this->once())->method('processRemoveElementAttributes');
+        $generatorContextMock = $this->getMockBuilder('Magento\Framework\View\Layout\Generator\Context')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $structureMock = $this->getMockBuilder('Magento\Framework\View\Page\Config\Structure')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $readerContextMock = $this->getMockBuilder('Magento\Framework\View\Layout\Reader\Context')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $readerContextMock->expects($this->any())
+            ->method('getPageConfigStructure')
+            ->willReturn($structureMock);
+
+        $structureMock->expects($this->once())->method('processRemoveAssets');
+        $structureMock->expects($this->once())->method('processRemoveElementAttributes');
 
         $assets = [
             'remoteName' => ['src' => 'file-url', 'src_type' => 'url', 'media'=> "all"],
@@ -77,16 +83,16 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         ];
         $this->pageConfigMock->expects($this->once())
             ->method('addRemotePageAsset')
-            ->with('remoteName', Generator::VIRTUAL_CONTENT_TYPE_LINK, ['attributes' => ['media'=> 'all']]);
+            ->with('remoteName', Head::VIRTUAL_CONTENT_TYPE_LINK, ['attributes' => ['media'=> 'all']]);
         $this->pageConfigMock->expects($this->once())
             ->method('addPageAsset')
             ->with('name', ['attributes' => ['media'=> 'print'], 'ie_condition' => 'lt IE 7']);
-        $this->structureMock->expects($this->once())
+        $structureMock->expects($this->once())
             ->method('getAssets')
             ->will($this->returnValue($assets));
 
         $title = 'Page title';
-        $this->structureMock->expects($this->once())
+        $structureMock->expects($this->once())
             ->method('getTitle')
             ->will($this->returnValue($title));
         $this->pageConfigMock->expects($this->once())
@@ -94,7 +100,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             ->with($title);
 
         $metadata = ['name1' => 'content1', 'name2' => 'content2'];
-        $this->structureMock->expects($this->once())
+        $structureMock->expects($this->once())
             ->method('getMetadata')
             ->will($this->returnValue($metadata));
         $this->pageConfigMock->expects($this->exactly(2))
@@ -110,7 +116,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
                 'html_attr_1' => 'html_attr_1',
             ]
         ];
-        $this->structureMock->expects($this->once())
+        $structureMock->expects($this->once())
             ->method('getElementAttributes')
             ->will($this->returnValue($elementAttributes));
         $this->pageConfigMock->expects($this->exactly(3))
@@ -121,14 +127,9 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
                 [PageConfig::ELEMENT_TYPE_HTML, 'html_attr_1', 'html_attr_1']
             );
 
-        $bodyClasses = ['class_1', 'class_2'];
-        $this->structureMock->expects($this->once())
-            ->method('getBodyClasses')
-            ->will($this->returnValue($bodyClasses));
-        $this->pageConfigMock->expects($this->exactly(2))
-            ->method('addBodyClass')
-            ->withConsecutive(['class_1'], ['class_2']);
-
-        $this->assertEquals($this->generator, $this->generator->process());
+        $this->assertEquals(
+            $this->headGenerator,
+            $this->headGenerator->process($readerContextMock, $generatorContextMock)
+        );
     }
 }
