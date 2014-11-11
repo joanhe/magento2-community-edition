@@ -153,6 +153,11 @@
         {
             "type": "composer",
             "url": "http://packages.magento.com/"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/bibumathew/magento-composer-installer.git"
         }
-    ]
+    ],
+    "minimum-stability": "dev"
 }
