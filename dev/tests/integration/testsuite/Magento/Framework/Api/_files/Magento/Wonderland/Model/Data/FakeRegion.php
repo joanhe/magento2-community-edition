@@ -1,5 +1,6 @@
 <?php
 /**
+ *
  * Magento
  *
  * NOTICE OF LICENSE
@@ -21,27 +22,47 @@
  * @copyright   Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+namespace Magento\Wonderland\Model\Data;
 
-namespace Magento\Framework\App\View\Deployment\Version\Generator;
+use Magento\Framework\Api\AbstractExtensibleObject;
 
-class TimestampTest extends \PHPUnit_Framework_TestCase
+class FakeRegion extends AbstractExtensibleObject
 {
-    /**
-     * @var Timestamp
+    /**#@+
+     * Constants for keys of data array
      */
-    private $object;
+    const REGION_CODE = 'region_code';
+    const REGION = 'region';
+    const REGION_ID = 'region_id';
+    /**#@-*/
 
-    protected function setUp()
+    /**
+     * Get region
+     *
+     * @return string
+     */
+    public function getRegion()
     {
-        $this->object = new Timestamp();
+        return $this->_get(self::REGION);
     }
 
-    public function testGenerate()
+    /**
+     * Get region code
+     *
+     * @return string
+     */
+    public function getRegionCode()
     {
-        $result = $this->object->generate();
-        $this->assertNotEmpty($result);
-        $this->assertInternalType('string', $result);
-        sleep(1);
-        $this->assertNotEquals($result, $this->object->generate(), 'Unique value is expected');
+        return $this->_get(self::REGION_CODE);
+    }
+
+    /**
+     * Get region id
+     *
+     * @return int
+     */
+    public function getRegionId()
+    {
+        return $this->_get(self::REGION_ID);
     }
 }
