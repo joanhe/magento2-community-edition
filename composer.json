@@ -53,6 +53,6 @@
             "type": "composer",
             "url": "http://packages.magento.com/"
         }
-    ]
-    "minimum-stability": dev
+    ],
+    "minimum-stability": "dev"
 }
