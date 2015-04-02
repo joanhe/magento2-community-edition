@@ -54,5 +54,5 @@
             "url": "http://packages.magento.com/"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "alpha"
 }
